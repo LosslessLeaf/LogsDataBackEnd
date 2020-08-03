@@ -1,7 +1,9 @@
 package com.providencepolice.data.logs;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -34,11 +36,11 @@ public class QueryCaseData {
 //		
 //	}
 
-//	private static void displayCaseLogs(List<CaseLog> caseLogs) {
-//		for (CaseLog caseLog : caseLogs) {
-//			System.out.println(caseLog);
-//		}
-//	}
+	private static void displayCaseLogs(List<CaseLog> caseLogs) {
+		for (CaseLog caseLog : caseLogs) {
+			System.out.println(caseLog);
+		}
+	}
 	
 	public List<CaseLog> getAllCaseLogs() {
 			SessionFactory factory = new Configuration()
@@ -46,7 +48,7 @@ public class QueryCaseData {
 				 .addAnnotatedClass(CaseLog.class)
 				 .buildSessionFactory();
 			
-			List<CaseLog> caseLogs;
+			List<CaseLog> caseLogs = new ArrayList<CaseLog>();
 
 			// create session
 			Session session = factory.getCurrentSession();
@@ -60,6 +62,7 @@ public class QueryCaseData {
 			}
 			
 			finally {
+				session.close();
 				factory.close();
 			}		
 
@@ -72,24 +75,35 @@ public class QueryCaseData {
 				 .addAnnotatedClass(CaseLog.class)
 				 .buildSessionFactory();
 			
-			List<CaseLog> caseLogs;
+			
+			List<CaseLog> caseLogs = new ArrayList<CaseLog>();
 
 			// create session
 			Session session = factory.getCurrentSession();
 			
 			try {
-				
+
+				System.out.println(caseNumber);
+				System.out.println("Began transaction");
 				session.beginTransaction();
 				
-				caseLogs = session.createQuery("from CaseLog WHERE CaseLog.casenumber='" + caseNumber + "'").getResultList();
-								
+				String queryString = "from CaseLog c where c.casenumber= : casenumber";
+				
+				Query<CaseLog> query = session.createQuery(queryString);
+				query.setParameter("casenumber", caseNumber);
+
+				caseLogs = query.list();
+				
+
+				displayCaseLogs(caseLogs);
 			}
 			
 			finally {
+				session.close();
 				factory.close();
 			}
 			
-
+			
 			return caseLogs;
 	}
 	

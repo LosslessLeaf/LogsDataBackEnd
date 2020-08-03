@@ -20,16 +20,11 @@ public class LogResource {
 		return logService.getAllCaseLogs();
 	}
 	
-	@GetMapping("/logs/hello")
-	public String sayHello() {
-		return "Hello!";
-	}
-	
 	@GetMapping("/logs/{casenumber}")
-	public List<CaseLog> getLog(@PathVariable("casenumber") String casenumber) {
+	public List<CaseLog> getLog(@PathVariable String casenumber) {
 		return logService.getCaseLogsByCaseNumber(casenumber);
 	}
-	
+		
 //	@DeleteMapping("/users/{username}/todos/{id}")
 //	public ResponseEntity<Void> deleteTodo(@PathVariable String username, @PathVariable long id) {
 //		Todo todo = todoService.deleteById(id);
